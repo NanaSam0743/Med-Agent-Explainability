@@ -26,20 +26,7 @@ Despite the high diagnostic accuracy of multimodal systems like Med-Agent, exist
 1.  **Phase 1–3 (Perception & Analysis):** 3D U-Net segmentation and DenseNet121 feature extraction (simulated via the MAMA-MIA benchmark).
 2.  **Phase 4 (Consistency Check):** Cross-modal conflict detection between imaging and clinical variables.
 3.  **Phase 5 (Decision & Report):** RAG escalation and output generation via the Google Gemini `2.5-flash-lite` model, producing both a clinician-facing narrative and an auditable trace.
-
-## 🚀 Getting Started
-
-### Prerequisites
-To run this notebook, you need:
-1.  A Google account to access Google Colab.
-2.  A **Gemini API Key** from [Google AI Studio](https://aistudio.google.com/).
-
-### Installation & Setup
-1.  Open the `X_Agent_Pipeline.ipynb` notebook in Google Colab.
-2.  Click on the **🔑 Key icon (Secrets)** on the left sidebar of Colab.
-3.  Add a new secret named `GEMINI_API_KEY` and paste your API key as the value. Toggle the button to grant notebook access.
-4.  Run all cells sequentially. 
-
+ 
 ### Usage Example
 The core function simulates a multidisciplinary tumor board. You can pass patient parameters directly to test the conflict resolution and RAG layer:
 
