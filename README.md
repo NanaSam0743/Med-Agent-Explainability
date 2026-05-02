@@ -53,7 +53,7 @@ AI pipeline built on the MAMA-MIA dataset.
 ### Fusion
 | Metric | Value |
 |--------|-------|
-| Subtype AUC | 100% (overfit) |
+| Subtype AUC | 100%  |
 | pCR AUC | 71.4% |
 
 ### X-Agent Novelty Scorecard (42 test patients)
