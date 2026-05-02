@@ -1,41 +1,110 @@
-# Med-Agent-Explainability
-Agent-level explainability layer for breast DCE-MRI decision support.
-# X-Agent: An Agent-Level Explainability Layer for Adaptive, Evidence-Grounded Breast MRI Decision Support
+# X-Agent: Explainability Layer for Breast MRI Decision Support
 
-[![Python](https://img.shields.io/badge/Python-3.12-blue.svg)](https://www.python.org/)
-[![Google Colab](https://img.shields.io/badge/Google%20Colab-F9AB00?logo=googlecolab&color=525252)](https://colab.research.google.com/)
-[![Gemini API](https://img.shields.io/badge/Gemini%20API-Flash%20Lite-8A2BE2)](https://aistudio.google.com/)
-
-**Institution:** National University of Computer and Emerging Sciences (FAST-NUCES), Islamabad, Pakistan  
-**Program:** Master of Science in Artificial Intelligence (MSAI), Session 2025–2027  
-**Authors:** Harris Imran & Saqib Hussain  
+## Overview
+X-Agent extends MedAgent (Dabrowicki et al., 2025) by adding
+three explainability novelties to a multimodal breast cancer
+AI pipeline built on the MAMA-MIA dataset.
 
 ---
 
-## 📌 Project Overview
-Despite the high diagnostic accuracy of multimodal systems like Med-Agent, existing breast DCE-MRI pipelines often lack an agent-level explainability layer. They stop at module-level outputs (like masks or labels) and operate as a "black box," failing to document the end-to-end reasoning path.
+## Novel Contributions
+- **GAP 1** — JSON Decision Trace Log (full pipeline auditability)
+- **GAP 2** — RAG Clinical Citations (NCCN guideline grounding)
+- **GAP 3** — Cross-Modal Conflict Detection (imaging vs pathology)
 
-**X-Agent** addresses this critical research gap. Built on top of the Med-Agent architecture and utilizing the MAMA-MIA dataset, X-Agent introduces a transparent decision trace, resolves cross-modal data conflicts, and grounds therapy advice in verifiable clinical evidence using Retrieval-Augmented Generation (RAG).
 
-## ✨ Key Features
-* **Cross-Modal Conflict Resolution:** Automatically detects discrepancies between MRI-derived imaging features and clinical pathology reports, resolving them through explicit logic (e.g., pathology overrides imaging).
-* **Evidence Grounding (RAG):** Intercepts standard Large Language Model (LLM) prompts to inject verbatim citations from clinical guidelines (e.g., NCCN 2026), ensuring treatments are backed by established medical literature.
-* **Agent-Level Traceability:** Generates a machine-readable JSON decision log (`x_agent_decision_log.json`) that captures inputs, conflict states, retrieved citations, and the final LLM rationale.
+---
 
-## ⚙️ Architecture Workflow
-1.  **Phase 1–3 (Perception & Analysis):** 3D U-Net segmentation and DenseNet121 feature extraction (simulated via the MAMA-MIA benchmark).
-2.  **Phase 4 (Consistency Check):** Cross-modal conflict detection between imaging and clinical variables.
-3.  **Phase 5 (Decision & Report):** RAG escalation and output generation via the Google Gemini `2.5-flash-lite` model, producing both a clinician-facing narrative and an auditable trace.
- 
-### Usage Example
-The core function simulates a multidisciplinary tumor board. You can pass patient parameters directly to test the conflict resolution and RAG layer:
+## Dataset
+- **MAMA-MIA v2** — 225 patients
+- DUKE (44) | ISPY2 (146) | ISPY1 (29) | NACT (6)
+- Train: 155 | Val: 28 | Test: 42
 
-```python
-run_x_agent_tumor_board(
-    age=48, 
-    imaging_subtype="Luminal A", 
-    clinical_subtype="HER2-enriched", 
-    size=2.1, 
-    volume=12.5, 
-    pcr_prob=68.2
-)
+---
+
+## Pipeline Modules
+| Module | Component | Type |
+|--------|-----------|------|
+| M1 | 3D U-Net Segmentation | Baseline |
+| M2 | DenseNet121 Classification | Baseline |
+| GAP 3 | Conflict Detection | Novel |
+| M4 | BioBERT Text Encoding | Baseline |
+| M5 | FiLM Fusion + pCR | Baseline + Novel |
+| M6 + GAP 2 | LLM + RAG Citations | Novel |
+| GAP 1 | JSON Decision Trace | Novel |
+
+---
+
+## Results
+
+### Segmentation
+| Metric | Ours | Paper |
+|--------|------|-------|
+| Dice (no augmentation) | 0.4728 | 0.8034 |
+| Dice (with augmentation) | 0.4957 | 0.8034 |
+
+### Classification
+| Metric | Ours | Paper |
+|--------|------|-------|
+| Accuracy | 40.48% | 83.31% |
+| AUC | 58.17% | 82.01% |
+| F1 Score | 39.11% | 78.33% |
+
+### Fusion
+| Metric | Value |
+|--------|-------|
+| Subtype AUC | 100% (overfit) |
+| pCR AUC | 71.4% |
+
+### X-Agent Novelty Scorecard (42 test patients)
+| Novelty | Result |
+|---------|--------|
+| Trace Completeness | 100% |
+| Citation Coverage | 100% |
+| Conflict Detection | 61.9% (26/42) |
+
+---
+
+## Setup
+
+### Requirements
+```bash
+pip install monai transformers nibabel \
+            scikit-image sentence-transformers \
+            scikit-learn torch
+
+
+Open notebook.ipynb in Google Colab
+Mount Google Drive
+Set dataset path to MAMA-MIA v2
+Run cells in order (1 → 20)
+
+---
+
+## Why Gap Exists vs Paper
+Factor              Ours        Paper
+────────────────────────────────────
+Training patients   155         1,054
+Total patients      225         1,506
+Augmentation        Yes         Unknown
+GPU                 T4 (15GB)   Unknown
+
+
+---
+
+## Authors
+- Harris Imran — 25I-7620
+- Saqib Hussain — 25I-7634
+
+**Department of Artificial Intelligence**
+National University of Computer and Emerging Sciences
+Islamabad, Pakistan | Session 2025-2027
+
+---
+
+## Reference
+Dabrowicki, W., Rusiecki, A., Jelen, L. (2025).
+Med-Agent: A Hybrid AI Agent for Multimodal Cancer Diagnosis.
+Procedia Computer Science, 270, 3290-3299.```
+
+### Run
